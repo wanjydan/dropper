@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "878950613976",
+    "firebase_url": "https://dropper-23d67.firebaseio.com",
+    "project_id": "dropper-23d67",
+    "storage_bucket": "dropper-23d67.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878950613976:android:13580e75473c372c",
+        "android_client_info": {
+          "package_name": "com.wanjy.dannie.dropper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "878950613976-n3jks5or43qurl4r4puelu1dtuhd296o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wanjy.dannie.dropper",
+            "certificate_hash": "21cf8cbbb2954e6b83cea12f893ca71b2c01faa3"
+          }
+        },
+        {
+          "client_id": "878950613976-58dc3m1uf4onk2qnt3td36hpuuegda00.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAg-1FyAPTQ9xWg88oFLbvjQ-TjwbLqVU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "878950613976-58dc3m1uf4onk2qnt3td36hpuuegda00.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
