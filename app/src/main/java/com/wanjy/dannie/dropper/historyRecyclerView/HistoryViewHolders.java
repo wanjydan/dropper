@@ -15,13 +15,13 @@ import com.wanjydan.dropper.R;
 
 public class HistoryViewHolders extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    public TextView rideId;
+    public TextView deliveryId;
     public TextView time;
     public HistoryViewHolders(View itemView) {
         super(itemView);
         itemView.setOnClickListener(this);
 
-        rideId = (TextView) itemView.findViewById(R.id.deliveryId);
+        deliveryId = (TextView) itemView.findViewById(R.id.deliveryId);
         time = (TextView) itemView.findViewById(R.id.time);
     }
 
@@ -30,7 +30,7 @@ public class HistoryViewHolders extends RecyclerView.ViewHolder implements View.
     public void onClick(View v) {
         Intent intent = new Intent(v.getContext(), HistorySingleActivity.class);
         Bundle b = new Bundle();
-        b.putString("rideId", rideId.getText().toString());
+        b.putString("deliveryId", deliveryId.getText().toString());
         intent.putExtras(b);
         v.getContext().startActivity(intent);
     }

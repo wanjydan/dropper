@@ -54,11 +54,11 @@ import java.util.Locale;
 import java.util.Map;
 
 public class HistorySingleActivity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener {
-    private String rideId, currentUserId, customerId, courierId;
+    private String deliveryId, currentUserId, customerId, courierId;
 
-    private TextView rideLocation;
-    private TextView rideDistance;
-    private TextView rideDate;
+    private TextView deliveryLocation;
+    private TextView deliveryDistance;
+    private TextView deliveryDate;
     private TextView userName;
     private TextView userPhone;
 
@@ -72,7 +72,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
     private LatLng destinationLatLng, pickupLatLng;
     private String distance;
-    private Double ridePrice;
+    private Double deliveryPrice;
     private Boolean customerPaid = false;
 
     private GoogleMap mMap;
@@ -88,15 +88,15 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
         polylines = new ArrayList<>();
 
-        rideId = getIntent().getExtras().getString("rideId");
+        deliveryId = getIntent().getExtras().getString("deliveryId");
 
         mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
 
 
-        rideLocation = (TextView) findViewById(R.id.deliveryLocation);
-        rideDistance = (TextView) findViewById(R.id.deliveryDistance);
-        rideDate = (TextView) findViewById(R.id.deliveryDate);
+        deliveryLocation = (TextView) findViewById(R.id.deliveryLocation);
+        deliveryDistance = (TextView) findViewById(R.id.deliveryDistance);
+        deliveryDate = (TextView) findViewById(R.id.deliveryDate);
         userName = (TextView) findViewById(R.id.userName);
         userPhone = (TextView) findViewById(R.id.userPhone);
 
@@ -108,7 +108,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        historyDeliveryInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(rideId);
+        historyDeliveryInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(deliveryId);
         getDeliveryInformation();
 
     }
@@ -134,7 +134,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                             }
                         }
                         if (child.getKey().equals("timestamp")){
-                            rideDate.setText(getDate(Long.valueOf(child.getValue().toString())));
+                            deliveryDate.setText(getDate(Long.valueOf(child.getValue().toString())));
                         }
                         if (child.getKey().equals("rating")){
                             mRatingBar.setRating(Integer.valueOf(child.getValue().toString()));
@@ -145,12 +145,20 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         }
                         if (child.getKey().equals("distance")){
                             distance = child.getValue().toString();
-                            rideDistance.setText(distance.substring(0, Math.min(distance.length(), 5)) + " km");
-                            ridePrice = Double.valueOf(distance) * 0.5;
+                            deliveryDistance.setText(distance.substring(0, Math.min(distance.length(), 5)) + " km");
+//                            deliveryPrice = Double.valueOf(distance) * 0.5;
+                            if (Integer.parseInt(distance) < 1){
+                                deliveryPrice = 1.5;
+                            }
+                            else if (Integer.parseInt(distance) >= 1 && Integer.parseInt(distance) < 3){
+                                deliveryPrice = 2.0;
+                            }
+                            else
+                                deliveryPrice = 3.0;
 
                         }
                         if (child.getKey().equals("destination")){
-                            rideLocation.setText(child.getValue().toString());
+                            deliveryLocation.setText(child.getValue().toString());
                         }
                         if (child.getKey().equals("location")){
                             pickupLatLng = new LatLng(Double.valueOf(child.child("from").child("lat").getValue().toString()), Double.valueOf(child.child("from").child("lng").getValue().toString()));
@@ -176,7 +184,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 historyDeliveryInfoDb.child("rating").setValue(rating);
                 DatabaseReference mCourierRatingDb = FirebaseDatabase.getInstance().getReference().child("Users").child(courierId).child("rating");
-                mCourierRatingDb.child(rideId).setValue(rating);
+                mCourierRatingDb.child(deliveryId).setValue(rating);
             }
         });
         if(customerPaid){
@@ -198,7 +206,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             .clientId(PaypalConfig.PAYPAL_CLIENT_ID);
 
     private void payPalPayment() {
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(ridePrice), "USD", "Courier",
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(deliveryPrice), "USD", "Courier",
                 PayPalPayment.PAYMENT_INTENT_SALE);
 
         Intent intent = new Intent(this, PaymentActivity.class);

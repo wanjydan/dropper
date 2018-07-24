@@ -5,17 +5,17 @@ package com.wanjy.dannie.dropper.historyRecyclerView;
  */
 
 public class HistoryObject {
-    private String rideId;
+    private String deliveryId;
     private String time;
 
-    public HistoryObject(String rideId, String time){
-        this.rideId = rideId;
+    public HistoryObject(String deliveryId, String time){
+        this.deliveryId = deliveryId;
         this.time = time;
     }
 
-    public String getDeliveryId(){return rideId;}
-    public void setDeliveryId(String rideId) {
-        this.rideId = rideId;
+    public String getDeliveryId(){return deliveryId;}
+    public void setDeliveryId(String deliveryId) {
+        this.deliveryId = deliveryId;
     }
 
     public String getTime(){return time;}

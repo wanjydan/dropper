@@ -16,8 +16,17 @@ exports.newRequest = functions.database.ref('/history/{pushId}').onCreate(event 
     var requestSnapshot = event.data;
 
     var distance  = requestSnapshot.child('distance').val();
-    var price  = distance * 0.5;
-
+    // var price  = distance * 0.5;
+    var price;
+    if(distance < 1){
+        price  = 1.5;
+    }
+    else if(distance >= 1 && distance < 3){
+        price  = 2.0;
+    }
+    else{
+        price  = 3.0;
+    }
     var pushId = event.params.pushId;
 
     return requestSnapshot.ref.parent.child(pushId).child('price').set(price);
