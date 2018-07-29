@@ -23,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.wanjy.dannie.dropper.historyRecyclerView.HistoryAdapter;
 import com.wanjy.dannie.dropper.historyRecyclerView.HistoryObject;
 
-import com.wanjydan.dropper.R;
+import com.wanjy.dannie.dropper.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 

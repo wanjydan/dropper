@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.wanjy.dannie.dropper.HistorySingleActivity;
-import com.wanjydan.dropper.R;
+import com.wanjy.dannie.dropper.R;
 
 /**
  * Created by manel on 10/10/2017.

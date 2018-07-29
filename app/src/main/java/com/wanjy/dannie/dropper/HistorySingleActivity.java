@@ -42,7 +42,7 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 
-import com.wanjydan.dropper.R;
+import com.wanjy.dannie.dropper.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,7 +70,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
     private DatabaseReference historyDeliveryInfoDb;
 
-    private LatLng destinationLatLng, pickupLatLng;
+    private LatLng pickupStationLatLng, pickupLatLng;
     private String distance;
     private Double deliveryPrice;
     private Boolean customerPaid = false;
@@ -147,23 +147,24 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                             distance = child.getValue().toString();
                             deliveryDistance.setText(distance.substring(0, Math.min(distance.length(), 5)) + " km");
 //                            deliveryPrice = Double.valueOf(distance) * 0.5;
-                            if (Integer.parseInt(distance) < 1){
+                            if (Double.parseDouble(distance.substring(0, Math.min(distance.length(), 5))) < 1){
                                 deliveryPrice = 1.5;
                             }
-                            else if (Integer.parseInt(distance) >= 1 && Integer.parseInt(distance) < 3){
+                            else if (Double.parseDouble(distance.substring(0, Math.min(distance.length(), 5))) >= 1
+                                    && Double.parseDouble(distance.substring(0, Math.min(distance.length(), 5))) < 3){
                                 deliveryPrice = 2.0;
                             }
                             else
                                 deliveryPrice = 3.0;
 
                         }
-                        if (child.getKey().equals("destination")){
+                        if (child.getKey().equals("pickupStation")){
                             deliveryLocation.setText(child.getValue().toString());
                         }
                         if (child.getKey().equals("location")){
                             pickupLatLng = new LatLng(Double.valueOf(child.child("from").child("lat").getValue().toString()), Double.valueOf(child.child("from").child("lng").getValue().toString()));
-                            destinationLatLng = new LatLng(Double.valueOf(child.child("to").child("lat").getValue().toString()), Double.valueOf(child.child("to").child("lng").getValue().toString()));
-                            if(destinationLatLng != new LatLng(0,0)){
+                            pickupStationLatLng = new LatLng(Double.valueOf(child.child("to").child("lat").getValue().toString()), Double.valueOf(child.child("to").child("lng").getValue().toString()));
+                            if(pickupStationLatLng != new LatLng(0,0)){
                                 getRouteToMarker();
                             }
                         }
@@ -293,7 +294,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
                 .alternativeRoutes(false)
-                .waypoints(pickupLatLng, destinationLatLng)
+                .waypoints(pickupLatLng, pickupStationLatLng)
                 .build();
         routing.execute();
     }
@@ -322,7 +323,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(pickupLatLng);
-        builder.include(destinationLatLng);
+        builder.include(pickupStationLatLng);
         LatLngBounds bounds = builder.build();
 
         int width = getResources().getDisplayMetrics().widthPixels;
@@ -333,7 +334,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         mMap.animateCamera(cameraUpdate);
 
         mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("pickup location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
-        mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("destination"));
+        mMap.addMarker(new MarkerOptions().position(pickupStationLatLng).title("pickupStation"));
 
         if(polylines.size()>0) {
             for (Polyline poly : polylines) {

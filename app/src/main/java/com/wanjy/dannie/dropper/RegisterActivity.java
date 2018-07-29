@@ -12,7 +12,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
-import com.wanjydan.dropper.R;
+import com.wanjy.dannie.dropper.R;
 
 import java.util.Map;
 

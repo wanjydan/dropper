@@ -12,12 +12,35 @@ paypal.configure({
 })
 
 
-exports.newRequest = functions.database.ref('/history/{pushId}').onCreate(event => {
-    var requestSnapshot = event.data;
+// exports.newRequest = functions.database.ref('/history/{pushId}').onCreate(event => {
+//     var requestSnapshot = event.data;
 
-    var distance  = requestSnapshot.child('distance').val();
-    // var price  = distance * 0.5;
-    var price;
+//     var distance  = requestSnapshot.child('distance').val();
+//     // var price  = distance * 0.5;
+//     var price = 1.5;
+//     if(distance < 1){
+//         price  = 1.5;
+//     }
+//     else if(distance >= 1 && distance < 3){
+//         price  = 2.0;
+//     }
+//     else{
+//         price  = 3.0;
+//     }
+
+//     var pushId = event.params.pushId;
+
+//     return requestSnapshot.ref.parent.child(pushId).child('price').set(price);
+    
+// });
+
+var db = admin.database();
+var dbref = db.ref("/history");
+exports.newRequest = dbref.on("child_added", function(snapshot) {
+    var newHistory = snapshot.val();
+    console.info("Id: " + snapshot.key);
+    var distance  = newHistory.distance;
+    var price = 1.5;
     if(distance < 1){
         price  = 1.5;
     }
@@ -27,11 +50,13 @@ exports.newRequest = functions.database.ref('/history/{pushId}').onCreate(event 
     else{
         price  = 3.0;
     }
-    var pushId = event.params.pushId;
 
-    return requestSnapshot.ref.parent.child(pushId).child('price').set(price);
-    
-});
+    var historyId = snapshot.key;
+
+    // return requestSnapshot.ref.parent.child(pushId).child('price').set(price);
+    dbref.child(historyId).child('price').set(price);
+  });
+
 
 
 function getPayoutsPending(uid){
@@ -88,7 +113,7 @@ function updatePaymentsPending(uid, paymentId){
                         timestamp: admin.database.ServerValue.TIMESTAMP,
                         paymentId: paymentId
                     });
-                    admin.database().ref('history/' + element.key + '/courierPaidOut').set(true);
+                    admin.database().ref('history/' + element.key + '/driverPaidOut').set(true);
                 }
             });
         }
@@ -111,7 +136,7 @@ exports.payout = functions.https.onRequest((request, response) => {
             var valueTrunc = parseFloat(Math.round(value * 100) / 100).toFixed(2);
 
             const sender_batch_id = Math.random().toString(36).substring(9);
-            const sync_mode = 'true';
+            // const sync_mode = 'true';
             const payReq = JSON.stringify({
                 sender_batch_header: {
                     sender_batch_id: sender_batch_id,
@@ -130,7 +155,7 @@ exports.payout = functions.https.onRequest((request, response) => {
                     }
                 ]
             });
-            paypal.payout.create(payReq, sync_mode, (error, payout) => {
+            paypal.payout.create(payReq, (error, payout) => {
                 if(error){
                     console.warn(error.response);
                     response.status('500').end();

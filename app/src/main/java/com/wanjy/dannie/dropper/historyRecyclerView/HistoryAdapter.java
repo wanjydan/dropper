@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.wanjydan.dropper.R;
+import com.wanjy.dannie.dropper.R;
 
 import java.util.List;
 

@@ -51,7 +51,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.wanjydan.dropper.R;
+import com.wanjy.dannie.dropper.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,8 +73,8 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
 
     private int status = 0;
 
-    private String customerId = "", destination;
-    private LatLng destinationLatLng, pickupLatLng;
+    private String customerId = "", pickupStation;
+    private LatLng pickupStationLatLng, pickupLatLng;
     private float deliveryDistance;
 
     private Boolean isLoggingOut = false;
@@ -85,7 +85,7 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
 
     private ImageView mCustomerProfileImage;
 
-    private TextView mCustomerName, mCustomerPhone, mCustomerDestination;
+    private TextView mCustomerName, mCustomerPhone, mCustomerPickupStation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +108,7 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
 
         mCustomerName = (TextView) findViewById(R.id.customerName);
         mCustomerPhone = (TextView) findViewById(R.id.customerPhone);
-        mCustomerDestination = (TextView) findViewById(R.id.customerDestination);
+        mCustomerPickupStation = (TextView) findViewById(R.id.customerPickupStation);
 
         mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch);
         mWorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -133,8 +133,8 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
                     case 1:
                         status=2;
                         erasePolylines();
-                        if(destinationLatLng.latitude!=0.0 && destinationLatLng.longitude!=0.0){
-                            getRouteToMarker(destinationLatLng);
+                        if(pickupStationLatLng.latitude!=0.0 && pickupStationLatLng.longitude!=0.0){
+                            getRouteToMarker(pickupStationLatLng);
                         }
                         mDeliveryStatus.setText("delivery completed");
 
@@ -191,7 +191,7 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
                     status = 1;
                     customerId = dataSnapshot.getValue().toString();
                     getAssignedCustomerPickupLocation();
-                    getAssignedCustomerDestination();
+                    getAssignedCustomerPickupStation();
                     getAssignedCustomerInfo();
                 }else{
                     endDelivery();
@@ -246,7 +246,7 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    private void getAssignedCustomerDestination(){
+    private void getAssignedCustomerPickupStation(){
         String courierId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child(courierId).child("customerRequest");
         assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -254,22 +254,22 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if(map.get("destination")!=null){
-                        destination = map.get("destination").toString();
-                        mCustomerDestination.setText("Destination: " + destination);
+                    if(map.get("pickupStation")!=null){
+                        pickupStation = map.get("pickupStation").toString();
+                        mCustomerPickupStation.setText("PickupStation: " + pickupStation);
                     }
                     else{
-                        mCustomerDestination.setText("Destination: --");
+                        mCustomerPickupStation.setText("PickupStation: --");
                     }
 
-                    Double destinationLat = 0.0;
-                    Double destinationLng = 0.0;
-                    if(map.get("destinationLat") != null){
-                        destinationLat = Double.valueOf(map.get("destinationLat").toString());
+                    Double pickupStationLat = 0.0;
+                    Double pickupStationLng = 0.0;
+                    if(map.get("pickupStationLat") != null){
+                        pickupStationLat = Double.valueOf(map.get("pickupStationLat").toString());
                     }
-                    if(map.get("destinationLng") != null){
-                        destinationLng = Double.valueOf(map.get("destinationLng").toString());
-                        destinationLatLng = new LatLng(destinationLat, destinationLng);
+                    if(map.get("pickupStationLng") != null){
+                        pickupStationLng = Double.valueOf(map.get("pickupStationLng").toString());
+                        pickupStationLatLng = new LatLng(pickupStationLat, pickupStationLng);
                     }
 
                 }
@@ -332,7 +332,7 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
         mCustomerInfo.setVisibility(View.GONE);
         mCustomerName.setText("");
         mCustomerPhone.setText("");
-        mCustomerDestination.setText("Destination: --");
+        mCustomerPickupStation.setText("PickupStation: --");
         mCustomerProfileImage.setImageResource(R.mipmap.ic_default_user);
     }
 
@@ -350,11 +350,11 @@ public class CourierMapActivity extends FragmentActivity implements OnMapReadyCa
         map.put("customer", customerId);
         map.put("rating", 0);
         map.put("timestamp", getCurrentTimestamp());
-        map.put("destination", destination);
+        map.put("pickupStation", pickupStation);
         map.put("location/from/lat", pickupLatLng.latitude);
         map.put("location/from/lng", pickupLatLng.longitude);
-        map.put("location/to/lat", destinationLatLng.latitude);
-        map.put("location/to/lng", destinationLatLng.longitude);
+        map.put("location/to/lat", pickupStationLatLng.latitude);
+        map.put("location/to/lng", pickupStationLatLng.longitude);
         map.put("distance", deliveryDistance);
         historyRef.child(requestId).updateChildren(map);
     }

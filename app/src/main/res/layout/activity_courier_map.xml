@@ -74,9 +74,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/customerDestination"
+                    android:id="@+id/customerPickupStation"
                     android:paddingBottom="10sp"
-                    android:text="Destination: --"/>
+                    android:text="PickupStation: --"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

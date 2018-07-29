@@ -49,7 +49,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.wanjydan.dropper.R;
+import com.wanjy.dannie.dropper.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,9 +74,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private SupportMapFragment mapFragment;
 
-    private String destination, requestService;
+    private String pickupStation, requestService;
 
-    private LatLng destinationLatLng;
+    private LatLng pickupStationLatLng;
 
     private LinearLayout mCourierInfo;
 
@@ -99,7 +99,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        destinationLatLng = new LatLng(0.0,0.0);
+        pickupStationLatLng = new LatLng(0.0,0.0);
 
         mCourierInfo = (LinearLayout) findViewById(R.id.courierInfo);
 
@@ -192,8 +192,8 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
-                destination = place.getName().toString();
-                destinationLatLng = place.getLatLng();
+                pickupStation = place.getName().toString();
+                pickupStationLatLng = place.getLatLng();
             }
             @Override
             public void onError(Status status) {
@@ -237,9 +237,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                                     String customerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                     HashMap map = new HashMap();
                                     map.put("customerDeliveryId", customerId);
-                                    map.put("destination", destination);
-                                    map.put("destinationLat", destinationLatLng.latitude);
-                                    map.put("destinationLng", destinationLatLng.longitude);
+                                    map.put("pickupStation", pickupStation);
+                                    map.put("pickupStationLat", pickupStationLatLng.latitude);
+                                    map.put("pickupStationLng", pickupStationLatLng.longitude);
                                     courierRef.updateChildren(map);
 
                                     getCourierLocation();
@@ -444,7 +444,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mCourierInfo.setVisibility(View.GONE);
         mCourierName.setText("");
         mCourierPhone.setText("");
-        mCourierNumber.setText("Destination: --");
+        mCourierNumber.setText("PickupStation: --");
         mCourierProfileImage.setImageResource(R.mipmap.ic_default_user);
     }
 

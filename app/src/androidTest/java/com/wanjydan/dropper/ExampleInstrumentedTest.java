@@ -1,4 +1,4 @@
-package com.wanjydan.dropper;
+package com.wanjy.dannie.dropper;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
